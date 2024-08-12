@@ -2,3 +2,5 @@ assets/
 assets copy/
 chromedriver-win64/
 .venv-python3v11/
+CSV/
+Hourly_Forecast/

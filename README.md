@@ -13,3 +13,8 @@
 
 ### Run the script
 1. Run the script: surf_forecast_webscrape.py
+    > python surf_forecast_webscrape.py
+
+### Convert JSON data to CSV
+1. Run the script: extract_json_to_csv.py
+    > python extract_json_to_csv.py
