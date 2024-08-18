@@ -214,9 +214,15 @@ class Task:
 
                     print(f"\tbreaker >> {brk}")
                     # Wait until the select element is present
-                    select_element = WebDriverWait(self.driver, 10).until(
-                        EC.presence_of_element_located((By.ID, "location_filename_part"))
-                    )
+                    while True:
+                        try:
+                            select_element = WebDriverWait(self.driver, 10).until(
+                                EC.presence_of_element_located((By.ID, "location_filename_part"))
+                            )
+                            break
+                        except:
+                            self.driver.refresh()
+                            pass 
 
                     # Initialize the Select class with the select element
                     select = Select(select_element)
@@ -360,30 +366,37 @@ class Task:
             "header": [],
             "items": []
         }
-        # Locate the table by its XPath
-        table = self.driver.find_element(By.CSS_SELECTOR, '#contdiv > div.col-reverse > div.not_in_print > div:nth-child(3) > section > div > table')
 
-        # Locate the <thead> element
-        thead = table.find_element(By.TAG_NAME, 'thead')
-        # Locate the <tr> within the <thead> and get all <th> elements
-        headers = thead.find_elements(By.TAG_NAME, 'th')
-        header_data = [header.text for header in headers]
-        sub_items.get("header").append(header_data)
+        while True:
+            try:
+                # Locate the table by its XPath
+                table = self.driver.find_element(By.CSS_SELECTOR, '#contdiv > div.col-reverse > div.not_in_print > div:nth-child(3) > section > div > table')
 
-        # Locate the <tbody> element
-        tbody = table.find_element(By.TAG_NAME, 'tbody')
-        # Locate all <tr> elements within the <tbody>
-        rows = tbody.find_elements(By.TAG_NAME, 'tr')
+                # Locate the <thead> element
+                thead = table.find_element(By.TAG_NAME, 'thead')
+                # Locate the <tr> within the <thead> and get all <th> elements
+                headers = thead.find_elements(By.TAG_NAME, 'th')
+                header_data = [header.text for header in headers]
+                sub_items.get("header").append(header_data)
 
-        # Extract data from each row
-        for row in rows:
-            # Locate all <td> elements within the current row
-            cols = row.find_elements(By.TAG_NAME, 'td')
-            # Extract and print the text of each <td>
-            row_data = [col.text for col in cols]
-            sub_items.get("items").append(row_data)
-            
-        self.write_json(sub_items, f"result_subtable_1_{self.filter_country}_{self.filter_region}_{self.filter_breaker}")
+                # Locate the <tbody> element
+                tbody = table.find_element(By.TAG_NAME, 'tbody')
+                # Locate all <tr> elements within the <tbody>
+                rows = tbody.find_elements(By.TAG_NAME, 'tr')
+
+                # Extract data from each row
+                for row in rows:
+                    # Locate all <td> elements within the current row
+                    cols = row.find_elements(By.TAG_NAME, 'td')
+                    # Extract and print the text of each <td>
+                    row_data = [col.text for col in cols]
+                    sub_items.get("items").append(row_data)
+                    
+                self.write_json(sub_items, f"result_subtable_1_{self.filter_country}_{self.filter_region}_{self.filter_breaker}")
+                break
+            except:
+                self.driver.refresh()
+                
         
 
         
