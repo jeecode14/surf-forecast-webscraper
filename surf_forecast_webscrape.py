@@ -25,10 +25,9 @@ from selenium.webdriver.support.ui import Select
 # global variables
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Change default download directory
-download_dir = r"C:\Users\JaysonCanete\Documents\OUTPUT"
 
 URL = "https://www.surf-forecast.com/"
-OUTPUT_FOLDER = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\assets"
+OUTPUT_FOLDER = r"C:\Users\jeeco\Downloads\SurfForecast"
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -71,8 +70,27 @@ class Task:
         self.driver = webdriver.Chrome(service=s, options=cOptions)
 
     def xpath(self, strings_xpath):
+        while True:
+            exist = self.check_xpath_exists(strings_xpath)
+            if exist: break
+            else:
+                self.driver.refresh()
+
         result = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, strings_xpath)))
         result.click()
+
+
+    def check_xpath_exists(self, xpath):
+        try:
+            element = self.driver.find_element(By.CSS_SELECTOR, xpath)
+            return True, element
+        except (NoSuchElementException, WebDriverException):
+            return False, None
+        except Exception as e:
+            print(f"Error in check_xpath_exists: {e}")
+            return False, None
+        
+
 
     def rerun_xpath(self, xp1, xp2):
         # Find all rows in the table body
@@ -164,6 +182,7 @@ class Task:
             self.regions = self.get_listed_items("region_id")
         
             for reg in self.regions:
+                print("\n","-----" * 30)
                 print(f"region >> {reg}")
                 # Wait until the select element is present
                 select_element = WebDriverWait(self.driver, 10).until(
@@ -182,6 +201,13 @@ class Task:
                 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 self.breaks = self.get_listed_items("location_filename_part")
                 for brk in self.breaks:
+                    if brk.get('text') in ['Loading...']: 
+                        time.sleep(3) 
+                    
+
+                self.breaks = self.get_listed_items("location_filename_part")
+                for brk in self.breaks:
+                    if brk.get('text') in ['Loading...']: continue
                     if brk.get('text') in ['Choose', 'Loading...']: continue
 
                     
@@ -230,6 +256,18 @@ class Task:
             # Extract text from each column
             row_head = [ch.text for ch in columns_head]
             row_data = [column.text for column in columns]
+
+            if row_head[0] == "m, \u00b0C":
+                # Locate the <td> element with the specific class
+                head = row.find_elements(By.TAG_NAME, 'td')
+                for h in head:
+                    try:
+                        btn = h.find_element(By.TAG_NAME, 'button')
+                        btn.click()
+                        time.sleep(0.5)
+                    except:
+                        pass
+                
 
             if row_head[0] in [
                 "Swell\nHeight Map\nSee all maps",]:
@@ -354,10 +392,13 @@ class Task:
 
 
     def begin(self):
+        print(">> Load website..")
         self.xpath('//*[@id="mainmenu"]/menu/li[8]/a')
         time.sleep(1)
+        print(">> Attempt to Login..")
         self.login()
         time.sleep(1)
+        print(">> Now begin to harvest data..")
         self.xpath('//*[@id="mainmenu"]/menu/li[2]/a')
         
         self.parent_path = f"{OUTPUT_FOLDER}/12_days_forecast"
