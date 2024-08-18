@@ -1,5 +1,9 @@
 # Web Scraper for Surf-Forecast: How to run the code?
 
+### Download supporting software
+1. Visual Studio Code
+2. Git
+
 ### Create Virtual Environment
 1. Download and install any python version. But we suggest to install Python=3.11
 2. To create virtual environment:

@@ -8,6 +8,8 @@ import pandas as pd
 import random
 import threading
 import json
+from dotenv import load_dotenv
+
 
 # importing webdriver from selenium
 from selenium import webdriver
@@ -28,6 +30,9 @@ download_dir = r"C:\Users\JaysonCanete\Documents\OUTPUT"
 URL = "https://www.surf-forecast.com/"
 OUTPUT_FOLDER = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\assets"
 
+# Load environment variables from the .env file
+load_dotenv()
+
 class Task:
 
     def __init__(self):
@@ -35,6 +40,8 @@ class Task:
         self.main_items = {}
         self.sub_items = []
         self.parent_path=None
+        self.userame= os.getenv("USERNAME")
+        self.password= os.getenv("PASSWORD")
 
     def write_json(self, data={}, filename="data"):
         # Writing JSON data to a file
@@ -48,7 +55,7 @@ class Task:
         return data
 
     def get_credentials(self):
-        return ['jeeson414@gmail.com','jeeSON141993@sf!!']
+        return [self.userame, self.password]
 
     def defineDriver(self):
         # Chrome driver specific version will be used base on the version of google/brave browser.

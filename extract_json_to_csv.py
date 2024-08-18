@@ -55,13 +55,13 @@ class Task:
         # Write each group to a separate CSV file
         for length, items in grouped_items.items():
             filename = f'{self.parent_path}/items_with_{length}_rows.csv'
-            with open(filename, 'w', newline='') as csvfile:
+            with open(filename, 'w', newline='', encoding='utf-8' ) as csvfile:
                 writer = csv.writer(csvfile)
                 # Write headers
                 writer.writerow([item['head'] for item in items])
                 # Write rows
                 rows = zip(*[item['rows'] for item in items])
-
+                
                 writer.writerows(rows)
 
 
