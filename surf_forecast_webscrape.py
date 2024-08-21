@@ -75,6 +75,7 @@ class Task:
             if exist: break
             else:
                 self.driver.refresh()
+                time.sleep(2)
 
         result = WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, strings_xpath)))
         result.click()
@@ -82,13 +83,13 @@ class Task:
 
     def check_xpath_exists(self, xpath):
         try:
-            element = self.driver.find_element(By.CSS_SELECTOR, xpath)
-            return True, element
+            element = self.driver.find_element(By.XPATH, xpath)
+            return True
         except (NoSuchElementException, WebDriverException):
-            return False, None
+            return False
         except Exception as e:
-            print(f"Error in check_xpath_exists: {e}")
-            return False, None
+            #print(f"Error in check_xpath_exists: {e}")
+            return False
         
 
 
@@ -115,11 +116,16 @@ class Task:
         while True:
             try:
 
-                if chk_counter >= 3: # check if web html is successfully loaded. If not, then refresh.
+                if chk_counter >= 3 and chk_counter<5: # check if web html is successfully loaded. If not, then refresh.
                     self.driver.refresh()
                     chk_counter = 0
                     time.sleep(10)
-                    pass
+                
+                if chk_counter >= 5: # check if web html is successfully loaded. If not, then refresh.
+                    self.driver.get("https://www.surf-forecast.com/sign_in")
+                    chk_counter = 0
+                    time.sleep(10)
+                    
 
                 time.sleep(5)
                 
