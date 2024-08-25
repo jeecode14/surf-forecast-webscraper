@@ -29,6 +29,9 @@ from selenium.webdriver.support.ui import Select
 URL = "https://www.surf-forecast.com/"
 OUTPUT_FOLDER = r"C:\Users\jeeco\Downloads\SurfForecast"
 
+# Change this for your selected country
+COUNTRY="Philippines"
+
 # Load environment variables from the .env file
 load_dotenv()
 
@@ -44,12 +47,12 @@ class Task:
 
     def write_json(self, data={}, filename="data"):
         # Writing JSON data to a file
-        with open(f'{self.parent_path}/{filename}.json', 'w') as json_file:
+        with open(f'{self.parent_path}/{filename}.json', 'w', encoding='utf-8') as json_file:
             json.dump(data, json_file, indent=4)
 
     def read_json(self, filename="data"):
         # Reading JSON data from a file
-        with open(f'{self.parent_path}/{filename}.json', 'r') as json_file:
+        with open(f'{self.parent_path}/{filename}.json', 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
         return data
 
@@ -61,7 +64,7 @@ class Task:
         s = Service(r"chromedriver-win64\chromedriver.exe")
 
         cOptions = webdriver.ChromeOptions()
-        #cOptions.add_argument("--headless") #disable browser pop-up. run in the background.
+        cOptions.add_argument("--headless") #disable browser pop-up. run in the background.
         cOptions.add_argument("--disable-extensions")
         cOptions.add_argument("--window-size=1420, 1080")
         cOptions.add_argument("--safebrowsing-disable-download-protection")
@@ -171,7 +174,7 @@ class Task:
         # FILTER: COUNTRY
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         for cnty in self.countries:
-            if cnty.get('text') != "Philippines": continue
+            if cnty.get('text') != COUNTRY: continue
             # Wait until the select element is present
             select_element = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.ID, "country_id"))
@@ -213,8 +216,8 @@ class Task:
 
                 self.breaks = self.get_listed_items("location_filename_part")
                 for brk in self.breaks:
-                    if brk.get('text') in ['Loading...']: continue
-                    if brk.get('text') in ['Choose', 'Loading...']: continue
+                    if brk.get('text') in ['Loading...']: time.sleep(2); continue
+                    if brk.get('text') in ['Choose', 'Loading...']: time.sleep(2); continue
 
                     
 
@@ -228,6 +231,7 @@ class Task:
                             break
                         except:
                             self.driver.refresh()
+                            time.sleep(3)
                             pass 
 
                     # Initialize the Select class with the select element

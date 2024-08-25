@@ -4,9 +4,11 @@ import os
 import glob
 import re
 
+# find your JSON data files (*.json)
+JSON_DATA = r"C:\Users\jeeco\Downloads\SurfForecast\hourly_forecast"
 
-JSON_DATA = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\assets\hourly_forecast"
-OUTPUT_PATH = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\images\hourly_forecast"
+# Assign location where you want to saved those images
+OUTPUT_PATH = r"C:\Users\jeeco\Downloads\SurfForecast\images\hourly_forecast"
 
 
 
@@ -42,13 +44,16 @@ class JsonToImage:
                     print(f"[{filename}]")
                     filepath = os.path.join(self.json_folder, filename)
 
-                    # Read the JSON data
-                    data = self.read_json(filepath)
-                    
-                    # Save the data to a CSV file
-                    path = f"{OUTPUT_PATH}/{country}_{region}_{break_name}"
-                    self.image_downloader(data,path)
-                    print("\n")
+                    try:
+                        # Read the JSON data
+                        data = self.read_json(filepath)
+                        
+                        # Save the data to a CSV file
+                        path = f"{OUTPUT_PATH}/{country}_{region}_{break_name}"
+                        self.image_downloader(data,path)
+                        print("\n")
+                    except:
+                        pass
 
 
 
@@ -60,7 +65,7 @@ class JsonToImage:
         
         
         for item in items:
-            if item.get("head") == "Swell\nHeight Map\nSee all maps":
+            if item.get("head","") == "Swell\nHeight Map\nSee all maps":
                 
                 # Download and save images
                 for index, url in enumerate(item['rows']):

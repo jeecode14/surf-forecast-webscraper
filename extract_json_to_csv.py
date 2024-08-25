@@ -5,31 +5,35 @@ import os
 import glob
 import re
 
-JSON_DATA = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\assets\hourly_forecast"
-OUTPUT_PATH = r"F:\PROGRAMMING\Python Tutorial\WEBSCRAPE\Surf Forecast\Hourly_Forecast"
+JSON_DATA = r"C:\Users\jeeco\Downloads\SurfForecast\hourly_forecast"
+OUTPUT_PATH = r"C:\Users\jeeco\Downloads\SurfForecast\CSV\hourly_forecast"
+
+# Change this for your selected country
+COUNTRY="Philippines"
 
 
 class Task:
     def __init__(self) -> None:
         self.parent_path = None
+    
 
 
     def read_json(self, filepath):
         # Reading JSON data from a file
-        with open(filepath, 'r') as json_file:
+        with open(filepath, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
         return data
 
     def read_all_json_files(self):
         # Get a list of all JSON files in the directory
-        json_files = glob.glob(os.path.join(JSON_DATA, 'result_Philippines*.json'))
+        json_files = glob.glob(os.path.join(JSON_DATA, f'result_{COUNTRY}*.json'))
 
         for filepath in json_files:
             data = self.read_json(filepath)
             # Process the data here
             self.begin(data)
-            
 
+    
 
     def begin(self, data={}):
         # Check if the data dictionary is empty
@@ -79,7 +83,7 @@ class JsonToCsvConverterForSubtable:
 
     def read_json(self, filepath):
         # Reading JSON data from a file
-        with open(filepath, 'r') as json_file:
+        with open(filepath, 'r', encoding='utf-8') as json_file:
             data = json.load(json_file)
         return data
 
@@ -90,7 +94,7 @@ class JsonToCsvConverterForSubtable:
 
         # Create a CSV file with the same name as the JSON file
         csv_filename = filename.replace('.json', '.csv')
-        with open(f"{path}/{csv_filename}", 'w', newline='') as csvfile:
+        with open(f"{path}/{csv_filename}", 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
             # Write header
             writer.writerow(header)
@@ -102,7 +106,7 @@ class JsonToCsvConverterForSubtable:
     def process_json_files(self):
         # Process all JSON files in the folder
         # Get a list of all JSON files in the directory
-        json_files = glob.glob(os.path.join(JSON_DATA, 'result_Philippines*.json'))
+        json_files = glob.glob(os.path.join(JSON_DATA, f'result_{COUNTRY}*.json'))
 
         for filename in os.listdir(self.json_folder):
             if filename.endswith('.json'):
@@ -127,5 +131,5 @@ if __name__ == "__main__":
     __tasks.read_all_json_files()
 
     # Subtable
-    #__subtable_class = JsonToCsvConverterForSubtable(JSON_DATA)
-    #__subtable_class.process_json_files()
+    __subtable_class = JsonToCsvConverterForSubtable(JSON_DATA)
+    __subtable_class.process_json_files()
